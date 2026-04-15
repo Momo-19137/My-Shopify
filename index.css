@@ -186,16 +186,21 @@ button { font-family: inherit; cursor: pointer; }
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    /* VERANDERING 1: We halen de margin-top weg (die het naar boven trok) */
-    /* En gebruiken padding-top om ruimte te maken VOOR de zwarte balk: */
-    padding-top: calc(70px + env(safe-area-inset-top, 0px)); /* Pas de '70px' aan voor meer/minder witruimte */
     
+    /* 1. We geven het witte vlak een kleine marge aan de bovenkant zodat hij loskomt van de zwarte balk */
+    margin-top: 10px; 
+    
+    /* 2. De achtergrondkleur van de hele pagina (body) moet zwart zijn, 
+       zodat de ruimte tussen de balk en het witte vlak ook zwart blijft */
     background: #fff;
-    /* VERANDERING 2: Omdat het nu strak tegen elkaar aan staat, zijn afgeronde hoeken bovenaan niet meer nodig. Die halen we weg of zetten we op 0. */
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    
+    /* 3. Hier brengen we de mooie ronde hoeken weer terug! */
+    border-top-left-radius: 26px;
+    border-top-right-radius: 26px;
+    
+    /* 4. Zorg dat de inhoud binnen het witte vlak niet tegen de rand aanplakt */
+    padding-top: 20px;
 }
-
 /* ============================================================
    BLACK HEADER
    ============================================================ */
