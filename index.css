@@ -182,24 +182,33 @@ button { font-family: inherit; cursor: pointer; }
 /* ============================================================
    MAIN APP
    ============================================================ */
+/* Stap 1: Zorg dat de basis-achtergrond zwart is, anders zie je de ronding niet */
+body {
+    background-color: #000 !important;
+    margin: 0;
+    padding: 0;
+}
+
+/* Stap 2: Pas het witte vlak aan */
 #mainPage {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: #fff;
     
-    /* 1. We geven het witte vlak een kleine marge aan de bovenkant zodat hij loskomt van de zwarte balk */
-    margin-top: 10px; 
+    /* DIT IS DE KEY: Geef hem wat ruimte vanaf de bovenkant */
+    margin-top: 15px; 
     
-    /* 2. De achtergrondkleur van de hele pagina (body) moet zwart zijn, 
-       zodat de ruimte tussen de balk en het witte vlak ook zwart blijft */
-    background: #fff;
+    /* Ronde hoeken forceren */
+    border-top-left-radius: 30px !important;
+    border-top-right-radius: 30px !important;
     
-    /* 3. Hier brengen we de mooie ronde hoeken weer terug! */
-    border-top-left-radius: 26px;
-    border-top-right-radius: 26px;
+    /* Voorkom dat inhoud de hoekjes 'overstroomt' */
+    overflow: hidden;
     
-    /* 4. Zorg dat de inhoud binnen het witte vlak niet tegen de rand aanplakt */
-    padding-top: 20px;
+    /* Zorg dat dit vlak bovenop de achtergrond ligt */
+    position: relative;
+    z-index: 1;
 }
 /* ============================================================
    BLACK HEADER
