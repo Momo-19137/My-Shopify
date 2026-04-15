@@ -11,14 +11,16 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #000;
+    background-color: #000000 !important; /* Dwingt zwart af */
+    background: #000 !important;          /* Voor de zekerheid */
+    margin: 0;
+    padding: 0;
     color: #111;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
     overscroll-behavior-y: none;
 }
-
 button { font-family: inherit; cursor: pointer; }
 
 /* ============================================================
