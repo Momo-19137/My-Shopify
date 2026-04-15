@@ -155,8 +155,11 @@ const ShopifyApp = {
     const count  = Math.min(Math.max(parseInt(g('notifCount')) || 3, 1), 50);
     const speed  = document.querySelector('.speed-btn.active')?.dataset.speed || 'fast';
 
-    const startOrder = Math.floor(1000 + Math.random() * 9000);
-    const body  = `${store} has a new order for ${items} item${items !== 1 ? 's' : ''} totaling $${amount}.`;
+    // TITEL: Een willekeurig nummer tussen 1 en 100
+    const startOrder = Math.floor(Math.random() * 100) + 1;
+    
+    // BESCHRIJVING: De tekst die onder de titel verschijnt
+    const body = `€${amount}, ${items} ${items === 1 ? 'item' : 'items'} from Online Store • ${store}`;
 
     if (!('Notification' in window)) {
       alert('Notifications not supported on this browser.');
@@ -187,9 +190,11 @@ const ShopifyApp = {
       ]);
     } catch (_) {}
 
-    const icon = '/images/shopify_icon.png';
+    // Let op: zorg dat dit pad naar je icoon klopt (bijv. 'shopify_icon.png' als het in dezelfde map staat)
+    const icon = 'shopify_icon.png';
 
     const fire = (i, opts) => {
+      // De titel wordt hier samengesteld met het ordernummer
       const title = `Order #${startOrder + i}`;
       if (reg) {
         reg.showNotification(title, { body, icon, ...opts });
