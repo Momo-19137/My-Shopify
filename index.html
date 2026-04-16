@@ -458,15 +458,25 @@ function randomChartPath() {
 }
 
 /**
- * Update de grafiek met een vloeiende overgang
+ * Update de grafiek met een vloeiende overgang die ook op mobiel werkt
  */
 function morphPath(pathEl, newD) {
     if (!pathEl) return;
-    // We gebruiken CSS transition voor de soepele beweging
-    pathEl.style.transition = 'd 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+
+    // 1. We gebruiken de 'animate' functie die mobiele browsers goed begrijpen
+    pathEl.animate([
+        // De 'd' is de vorm van de lijn
+        { d: pathEl.getAttribute('d') }, // Startpunt (oude vorm)
+        { d: newD }                      // Eindpunt (nieuwe vorm)
+    ], {
+        duration: 800,           // Snelheid: 0.8 seconden
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)', // De mooie Shopify-vloeiing
+        fill: 'forwards'         // Zorg dat de lijn op de nieuwe plek blijft staan
+    });
+
+    // 2. We zetten ook het attribuut echt om voor de zekerheid
     pathEl.setAttribute('d', newD);
 }
-
 /**
  * Update alle charts (0 t/m 3)
  */
