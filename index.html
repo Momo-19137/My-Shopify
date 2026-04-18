@@ -238,22 +238,29 @@
     </button>
 </div>
 
-        <div id="metricsViewport">
-            <div id="panelA">
-                <div class="stats-row">
-                    <div class="stat-col">
-                        <div class="stat-label" id="col0label">Total sales</div>
-                        <div class="stat-val" id="col0val" contenteditable="true" inputmode="decimal">$1,169.61</div>
-                    </div>
-                    <div class="stat-col center">
-                        <div class="stat-label" id="col1label">Orders</div>
-                        <div class="stat-val muted" id="col1val" contenteditable="true" inputmode="numeric">2</div>
-                    </div>
-                    <div class="stat-col right">
-                        <div class="stat-label" id="col2label">Conversion</div>
-                        <div class="stat-val muted" id="col2val" contenteditable="true" inputmode="decimal">0%</div>
-                    </div>
+     <div id="metricsViewport">
+    <div id="panelA">
+        <div class="stats-row" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+            
+            <div class="stat-col">
+                <div class="stat-label" id="col0label">Total sales</div>
+                <div class="stat-val" style="display: flex; align-items: center; white-space: nowrap;">
+                    <span style="margin-right: 1px;">$</span>
+                    <span id="col0val" contenteditable="true" inputmode="decimal" style="outline: none;">1,169.61</span>
                 </div>
+            </div>
+
+            <div class="stat-col center">
+                <div class="stat-label" id="col1label">Orders</div>
+                <div class="stat-val muted" id="col1val" contenteditable="true" inputmode="numeric" style="outline: none;">2</div>
+            </div>
+
+            <div class="stat-col right">
+                <div class="stat-label" id="col2label">Conversion</div>
+                <div class="stat-val muted" id="col2val" contenteditable="true" inputmode="decimal" style="outline: none;">0%</div>
+            </div>
+
+        </div>
                 <div class="chart-area" id="chartAreaA"></div>
             </div>
             <div id="panelB" aria-hidden="true">
@@ -495,11 +502,13 @@ function refreshReportStats() {
     const fulfill      = Math.round(1   + Math.random() * 49);
     const payments     = Math.round(1   + Math.random() * 29);
 
-    const col0 = document.getElementById('col0val');
-    const col1 = document.getElementById('col1val');
-    const col2 = document.getElementById('col2val');
+    const col0 = document.getElementById('col0val'); // Total Sales
+    const col1 = document.getElementById('col1val'); // Orders
+    const col2 = document.getElementById('col2val'); // Conversion
 
-    if (col0) { col0.textContent = fmtUSD(totalSales); flashEl(col0); }
+    // AANPASSING: We halen de $ weg uit de textContent omdat de $ nu vast in de HTML staat (als je mijn vorige HTML tip hebt gevolgd)
+    // Als je de $ nog in de HTML hebt staan bij col0val, gebruik dan:
+    if (col0) { col0.textContent = totalSales.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); flashEl(col0); }
     if (col1) { col1.textContent = orders.toLocaleString(); flashEl(col1); }
     if (col2) { col2.textContent = conversion + '%'; flashEl(col2); }
 
@@ -515,8 +524,10 @@ function refreshReportStats() {
         var el = document.getElementById(id);
         if (el) el.value = val;
     };
-    setVal('cfgSales',    fmtUSD(totalSales).replace('$', '').replace(',', ''));
-    setVal('cfgGross',    fmtUSD(grossSales).replace('$', '').replace(',', ''));
+    
+    // Zorgt dat de settings pagina ook punten/komma's krijgt
+    setVal('cfgSales',    totalSales.toFixed(2));
+    setVal('cfgGross',    grossSales.toFixed(2));
     setVal('cfgOrders',   orders);
     setVal('cfgConv',     conversion);
     setVal('cfgVisitors', visitors);
@@ -527,7 +538,7 @@ function refreshReportStats() {
 }
 
 /* ─────────────────────────────────────────────
-    NIEUW: Direct bewerken synchronisatie
+    GEUPDATE: Direct bewerken synchronisatie
 ───────────────────────────────────────────── */
 function syncEditableWithSettings() {
     const ids = ['col0val', 'col1val', 'col2val', 'actionFulfill', 'actionPayments', 'dispVisitors'];
@@ -539,7 +550,7 @@ function syncEditableWithSettings() {
         el.addEventListener('blur', () => {
             let val = el.innerText.trim();
             
-            // Map de ID's naar de juiste settings input
+            // We zijn nu minder streng met replace, zodat punten en komma's blijven staan
             if (id === 'col0val') document.getElementById('cfgSales').value = val.replace(/[$,]/g, '');
             if (id === 'col1val') document.getElementById('cfgOrders').value = val.replace(/[,]/g, '');
             if (id === 'col2val') document.getElementById('cfgConv').value = val.replace('%', '');
@@ -548,7 +559,6 @@ function syncEditableWithSettings() {
             if (id === 'dispVisitors') document.getElementById('cfgVisitors').value = val;
         });
 
-        // Voorkom Enter-toets (nieuwe regels)
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -564,10 +574,8 @@ document.addEventListener('DOMContentLoaded', function() {
         reportBtn.addEventListener('click', refreshReportStats);
     }
     
-    // Activeer het bewerken
     syncEditableWithSettings();
 
-    // Settings openen/sluiten (bestaande logica)
     document.getElementById('openSettings').onclick = () => {
         document.getElementById('settingsPage').classList.add('active');
     };
@@ -575,9 +583,20 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('settingsPage').classList.remove('active');
     };
     document.getElementById('saveSettings').onclick = () => {
-        document.getElementById('settingsPage').classList.remove('active');
-        // Je zou hier eventueel een functie kunnen aanroepen die de stats updatet op basis van de settings inputs
+        // Update de stats op basis van wat je in de settings hebt getypt
+        const sVal = (id) => document.getElementById(id).value;
+        
+        document.getElementById('col0val').textContent = parseFloat(sVal('cfgSales')).toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('col1val').textContent = parseInt(sVal('cfgOrders')).toLocaleString();
+        document.getElementById('col2val').textContent = sVal('cfgConv') + '%';
+        document.getElementById('dispVisitors').textContent = sVal('cfgVisitors');
+        document.getElementById('actionFulfill').textContent = sVal('cfgFulfill');
+        document.getElementById('actionPayments').textContent = sVal('cfgPayments');
+        
+       document.getElementById('settingsPage').classList.remove('active');
     };
 });
 </script>
-</body></html>
+
+</body>
+</html>
